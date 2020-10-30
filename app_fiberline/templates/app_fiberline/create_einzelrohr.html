@@ -1,0 +1,174 @@
+{% extends 'app_fiberline/base.html' %}
+
+{% block title %}Einzelrohr erstellen | {{ rohr_db.name }}{% endblock title %}
+
+{% block style %}
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 0.5fr 0.5fr 1fr 1fr;
+        grid-template-rows: 0.125fr 0.5fr 0.5fr;
+        grid-template-areas:
+        "content-button content-button content-title content-title"
+        "content-information-01 content-information-01 content-create content-create"
+        "content-information-02 content-information-02 content-create content-create";
+        grid-gap: 0.5rem;
+        margin: 0.5rem;
+    }
+    .content-button { grid-area: content-button; }
+    .content-title { grid-area: content-title; }
+    .content-information-01 { grid-area: content-information-01; }
+    .content-information-02 { grid-area: content-information-02; }
+    .content-create { grid-area: content-create; }
+
+    a, a:hover {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    small { text-decoration: underline; }
+
+    .formset-object { display: flex; }
+
+    .formset-text { margin-right: 1rem; }
+
+    select { width: 100px; }
+
+    table { font-size: 0.8rem; }
+
+{% endblock style %}
+
+{% block content %}
+<div class="grid-container">
+
+    <div class="content-button">
+        <button type="button" class="btn btn-secondary btn-list"><a href="{% url 'SchachtKvz' schacht_kv_db.id %}">Zurück</a></button>
+    </div>
+
+    <div class="content-title">
+        <small>Rohrbezeichnung:</small>
+        <h4>{{ rohr_db.name }}</h4>
+    </div>
+
+    <div class="content-information-01">
+        <div class="card" style="height: 50vh;">
+            <div class="card-body">
+
+                <small>bereits verplante Einzelrohre:</small><br><br>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Rohre</th>
+                            <th scope="col">Kunde</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in ha_rohre_db_func %}
+                            <tr>
+                                <th scope="col">{{ item.rohr_name }}_{{ item.einzelrohr_name }}</th>
+                                {% if item.ha_add is not None %}
+                                    <td>{{ item.strasse }} {{ item.ha_number }}{{ item.ha_add }}</td>
+                                {% else %}
+                                    <td>{{ item.strasse }} {{ item.ha_number }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="content-information-02">
+        <div class="card" style="height: 30vh;">
+            <div class="card-body">
+
+                <small>defekte Einzelrohre:</small><br><br>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Rohre</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in ha_rohre_db_malfunc %}
+                            <tr>
+                                <th scope="col">{{ item.rohr_name }}_{{ item.einzelrohr_name }}</th>
+                                <td>Defekt</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="content-create">
+        <div class="card">
+            <div class="card-body">
+
+                <form action="" method="post">
+                    {% csrf_token %}
+
+                    <div class="formset-object">
+                        <div class="formset-text"><p>Ortskürzel:</p></div>
+                        <div>{{ formset.ort_kuerzel }}</div>
+                    </div>
+
+                    <div class="formset-object">
+                        <div class="formset-text"><p>Ort:</p></div>
+                        <div>{{ formset.ort }}</div>
+                    </div>
+
+                    <div class="formset-object">
+                        <div class="formset-text"><p>Strasse:</p></div>
+                        <div>{{ formset.strasse }}</div>
+                    </div>
+
+                    <div class="formset-object">
+                        <div class="formset-text"><p>Hausnummer:</p></div>
+                        <div>{{ formset.ha_number }}</div>
+                    </div>
+
+                    <div class="formset-object">
+                        <div class="formset-text"><p>HA-Zusatz:</p></div>
+                        <div>{{ formset.ha_add }}</div>
+                    </div>
+
+                    <div class="formset-object">
+                        <div class="formset-text"><p>Wohneinheiten:</p></div>
+                        <input type="number" name="ha_rohr_we_num" min="1" max="100" placeholder="1">
+                    </div>
+
+                    <div class="formset-object">
+                        <div class="formset-text"><p>Hausanschlussrohr defekt?:</p></div>
+                        <div>{{ formset.einzelrohr_malfunction }}</div>
+                    </div>
+
+                    <div class="formset-object">
+                        <div class="formset-text"><p>Hausanschlussrohr:</p></div>
+                        <div>
+                            <select name="ha_rohr_remaining">
+                                {% for item in list_remaining %}
+                                <option value="{{ item }}">{{ item }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <input type="submit" value="Submit">
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}
+
+{% block script %}{% endblock script %}

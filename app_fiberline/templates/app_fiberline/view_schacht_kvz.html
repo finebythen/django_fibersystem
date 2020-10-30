@@ -1,0 +1,226 @@
+{% extends 'app_fiberline/base.html' %}
+
+{% block title %}Fiberline | {{ schacht_kvz_db.name }}{% endblock title %}
+
+{% block style %}
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-rows: 0.25fr 0.5fr 0.5fr 0.5fr 0.125fr;
+        grid-template-areas:
+        "content-buttons content-buttons content-title content-title content-title content-title"
+        "content-information content-rohre content-rohre content-filter-customer content-filter-customer content-filter-customer"
+        "content-information content-map content-map content-list-customers content-list-customers content-list-customers"
+        "content-information content-map content-map content-list-customers content-list-customers content-list-customers"
+        "content-last-user content-last-user content-last-user content-last-user content-last-user content-last-user";
+        grid-gap: 0.5rem;
+        margin: 0.5rem;
+    }
+    .content-buttons {
+        grid-area: content-buttons;
+        display: inline-block;
+    }
+    .content-title { grid-area: content-title; }
+    .content-information { grid-area: content-information; }
+    .content-rohre { grid-area: content-rohre; }
+    .content-filter-customer { grid-area: content-filter-customer; }
+    .content-list-customers { grid-area: content-list-customers; }
+    .content-map { grid-area: content-map; }
+    .content-last-user {
+        grid-area: content-last-user;
+        text-align: center;
+        margin: 0.5rem;
+    }
+
+    a, a:hover {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    small { text-decoration: underline; }
+
+    h4 { font-weight: 700; }
+
+    h6 { text-decoration: underline; }
+
+    button { margin: 0.5rem; }
+
+    .map-card {
+        height: 100%;
+        max-height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .table-link, .table-link:hover {
+        color: #000;
+        text-decoration: none;
+    }
+
+    .table-link:hover { font-weight: 700; }
+
+    table a, table a:hover { color: #000; }
+
+    table a:hover { font-weight: 700; }
+
+{% endblock style %}
+
+{% block content %}
+<div class="grid-container">
+
+    <div class="content-buttons">
+        <button type="button" class="btn btn-secondary btn-list"><a href="{% url 'Technikstandort' schacht_kvz_db.technikstandort_id %}">Zurück</a></button>
+        <button type="button" class="btn btn-primary btn-list"><a href="{% url 'CreateRohr' schacht_kvz_db.id %}">Rohr erstellen</a></button>
+
+        {% if schacht_kvz_db.kabel_status_versorgt %}
+            <button type="button" class="btn btn-success btn-list"><a href="{% url 'CombineSchachtKvzKabel' schacht_kvz_db.id %}">Kabel auflegen</a></button>
+        {% else %}
+            <button type="button" class="btn btn-success btn-list"><a  style="text-decoration: line-through;" href="#">Kabel auflegen</a></button>
+        {% endif %}
+
+    </div>
+
+    <div class="content-title">
+        <small>Schacht / Kabelverzweiger:</small>
+        <h4>{{ schacht_kvz_db.technikstandort }} | {{ schacht_kvz_db.name }}</h4>
+    </div>
+
+    <div class="content-information">
+        <div class="card">
+            <div class="card-body">
+                <h6>Allgemeine Informationen:</h6>
+                <br>
+                <small>Typ:</small>
+                <h5>{{ schacht_kvz_db.type }}</h5>
+                <br>
+                <small>Versorgung: A-Seite / B-Seite</small>
+                <h5>{{ schacht_kvz_db.getTrueFalse }} / {{ schacht_kvz_db.getBSite }}</h5>
+                <br>
+                <small>Kabel A-Seite:</small>
+                <h5>{{ schacht_kvz_db.getACable }}</h5>
+                <br>
+                <small>Kabel B-Seite:</small>
+                <h5>{{ schacht_kvz_db.getBCable }}</h5>
+                <br>
+                <small>Fasern A-Seite:</small>
+                <h5>{{ schacht_kvz_db.getASiteFibers }}</h5>
+                <br>
+                <small>Fasern B-Seite:</small>
+                <h5>{{ schacht_kvz_db.getBSiteFibers }}</h5>
+                <br>
+                <small>Erstellt von:</small>
+                <h5>{{ schacht_kvz_db.user_created }}</h5>
+                <br>
+                <small>Erstellt am:</small>
+                <h5>{{ schacht_kvz_db.date_created }}</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-rohre">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Rohrbezeichnung</th>
+                            <th scope="col">gepl. Einzelrohre</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, value in dict_rohre.items %}
+                            <tr>
+                                <td><a class="table-link" href="{% url 'CreateEinzelrohr' key %}">{{ key }}</a></td>
+                                <td>{{ value }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-filter-customer">
+        <div class="card">
+            <div class="card-body">
+
+                <form action="" method="get">
+                    {{ filter.form }}
+                    <button type="submit" class="btn btn-info">Filter</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="content-list-customers">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Ort / Gemeinde</th>
+                            <th scope="col">Hausanschluss</th>
+                            <th scope="col">WE</th>
+                            <th scope="col">Anschlussrohr</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size: 0.8rem;">
+                        {% for item in ha_rohre_db_func %}
+                            <tr>
+                                <td style="width: 20%;">{{ item.ort }}</td>
+
+                                {% if schacht_kvz_db %}
+                                    {% if item.ha_add is not None %}
+                                        <td style="width: 40%;">
+                                            <a href="{% url 'CreateWohneinheiten' item.id %}">
+                                                {{ item.strasse }} {{ item.ha_number }}{{ item.ha_add }}
+                                            </a>
+                                        </td>
+                                    {% else %}
+                                        <td style="width: 40%;">
+                                            <a href="{% url 'CreateWohneinheiten' item.id %}">
+                                                {{ item.strasse }} {{ item.ha_number }}
+                                            </a>
+                                        </td>
+                                    {% endif %}
+                                {% else %}
+                                    {% if item.ha_add is not None %}
+                                        <td style="width: 40%;">{{ item.strasse }} {{ item.ha_number }}{{ item.ha_add }}</td>
+                                    {% else %}
+                                        <td style="width: 40%;">{{ item.strasse }} {{ item.ha_number }}</td>
+                                    {% endif %}
+                                {% endif %}
+
+                                <td style="width: 10%;">{{ item.we_number }}</td>
+                                <td style="width: 20%;">{{ item.rohr_name }}_{{ item.einzelrohr_name }}</td>
+                                <td style="width: 10%;"></td>
+
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-map">
+        <div class="card map-card">
+            <div class="card-body">
+                {{ my_map|safe }}
+            </div>
+        </div>
+    </div>
+
+    <div class="content-last-user">
+        <small style="text-decoration: none; color: #6c757d;">
+            letzte Änderung: {{ schacht_kvz_db.user_updated }} am {{ schacht_kvz_db.date_updated }}
+        </small>
+    </div>
+
+</div>
+{% endblock content %}
+
+{% block script %}{% endblock script %}

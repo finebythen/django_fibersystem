@@ -1,0 +1,93 @@
+{% extends 'app_fiberline/base.html' %}
+
+{% block title %}WE erstellen | {{ customer }}{% endblock title %}
+
+{% block style %}
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 0.125fr 1fr;
+        grid-template-areas:
+        "content-button content-title content-title"
+        "content-information content-create content-create";
+        grid-gap: 0.5rem;
+        margin: 0.5rem;
+    }
+    .content-button { grid-area: content-button; }
+    .content-title { grid-area: content-title; }
+    .content-information { grid-area: content-information; }
+    .content-create { grid-area: content-create; }
+
+    a, a:hover {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    table a, table a:hover { color: #000; }
+
+    table a:hover { font-weight: 700; }
+
+    small { text-decoration: underline; }
+
+{% endblock style %}
+
+{% block content %}
+<div class="grid-container">
+
+    <div class="content-button">
+        <button type="button" class="btn btn-secondary btn-list"><a href="{% url 'SchachtKvz' schacht_kvz_db.id %}">Zurück</a></button>
+    </div>
+
+    <div class="content-title">
+        <small>Adresse:</small>
+        <h4>{{ customer }}</h4>
+    </div>
+
+    <div class="content-information">
+        <div class="card">
+            <div class="card-body">
+                <p style="text-decoration: underline;">bereits erstellte Wohneinheiten:</p><br>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">We-Nr.</th>
+                            <th scope="col">Bezeichnung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in we_db %}
+                            <tr>
+                                <th scope="col">{{ item.we_number }}</th>
+                                <td><a href="{% url 'DeleteWohneinheit' item.id %}">{{ item.we_name }}</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="content-create">
+        <div class="card">
+            <div class="card-body">
+
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ formset.as_p }}
+
+                    {% if we_stat == False %}
+                        <input type="submit" value="Submit">
+                    {% endif %}
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}{% endblock script %}

@@ -1,0 +1,68 @@
+{% extends 'app_fiberline/base.html' %}
+
+{% block title %}{% endblock title %}
+
+{% block style %}
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 0.25fr 1fr 0.25fr;
+        grid-template-rows: 0.125fr 1fr;
+        grid-template-areas:
+        "content-button content-information content-empty-01"
+        "content-empty-02 content-update content-empty-03";
+        grid-gap: 0.5rem;
+        margin: 0.5rem;
+    }
+    .content-button { grid-area: content-button; }
+    .content-information { grid-area: content-information; }
+    .content-update { grid-area: content-update; }
+    .content-empty-01 { grid-area: content-empty-01; }
+    .content-empty-02 { grid-area: content-empty-02; }
+    .content-empty-03 { grid-area: content-empty-03; }
+
+    a, a:hover {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    small {
+        text-decoration: underline;
+    }
+
+{% endblock style %}
+
+{% block content %}
+<div class="grid-container">
+
+    <div class="content-button">
+        <button type="button" class="btn btn-secondary btn-list"><a href="{% url 'Technikstandort' kabel_db.technikstandort.id %}">Zurück</a></button>
+    </div>
+
+    <div class="content-information">
+        <small>Kabelbezeichnung:</small>
+        <h4>{{ kabel_db.name }}</h4>
+    </div>
+
+    <div class="content-update">
+        <div class="card">
+            <div class="card-body">
+
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ formset.as_p }}
+                    <input type="submit" VALUE="Aktualisieren">
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="content-empty-01"></div>
+    <div class="content-empty-02"></div>
+    <div class="content-empty-03"></div>
+
+</div>
+{% endblock content %}
+
+{% block script %}{% endblock script %}

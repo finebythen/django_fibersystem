@@ -1,0 +1,36 @@
+{% extends 'app_fiberline/base.html' %}
+
+{% block title %}Wohneinheit löschen | {{ we_db.we_name }}{% endblock title %}
+
+{% block style %}
+
+    .container { margin-top: 3rem; }
+
+    small { text-decoration: underline; }
+
+    h4 { margin-bottom: 2rem; }
+
+{% endblock style %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+
+            <small>Hausanschluss:</small>
+            <h4>{{ customer }}</h4>
+
+            <p>Wollen Sie die Wohneinheit <b>{{ we_db.we_name }}</b> wirklich löschen?</p>
+
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Bestätigen">
+                <a style="margin-left: 2rem;" href="{% url 'CreateWohneinheiten' ha_rohr_id %}">Abbrechen</a>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}{% endblock script %}

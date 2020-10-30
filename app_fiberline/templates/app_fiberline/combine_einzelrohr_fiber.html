@@ -1,0 +1,54 @@
+{% extends 'app_fiberline/base.html' %}
+
+{% block title %}Faserplanung | {{ customer }}{% endblock title %}
+
+{% block style %}
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-rows: 0.125fr 0.125fr 1fr;
+        grid-template-areas:
+        "content-button content-information content-information content-information"
+        "content-title-01 content-title-02 content-title-03 content-title-03"
+        "content-card-01 content-card-02 content-card-03 content-card-03";
+        grid-gap: 0.5rem;
+        margin: 0.5rem;
+    }
+    .content-button { grid-area: content-button; }
+    .content-information { grid-area: content-information; }
+    .content-title-01 { grid-area: content-title-01; }
+    .content-title-02 { grid-area: content-title-02; }
+    .content-title-03 { grid-area: content-title-03; }
+    .content-card-01 { grid-area: content-card-01; }
+    .content-card-02 { grid-area: content-card-02; }
+    .content-card-03 { grid-area: content-card-03; }
+
+    a, a:hover {
+        color: #fff;
+        text-decoration: none;
+    }
+
+{% endblock style %}
+
+{% block content %}
+<div class="grid-container">
+
+    <div class="content-button">
+        <button type="button" class="btn btn-secondary btn-list"><a href="{% url 'SchachtKvz' schacht_kvz_db.id %}">Zurück</a></button>
+    </div>
+
+    <div class="content-information">
+        <small>Adresse:</small>
+    </div>
+
+    <div class="content-title-01"></div>
+    <div class="content-title-02"></div>
+    <div class="content-title-03"></div>
+    <div class="content-card-01"></div>
+    <div class="content-card-02"></div>
+    <div class="content-card-03"></div>
+</div>
+{% endblock content %}
+
+{% block script %}{% endblock script %}

@@ -1,0 +1,77 @@
+{% extends 'app_fiberline/base.html' %}
+
+{% block title %}{{ schacht_kvz_db.name }} | Rohr erstellen{% endblock title %}
+
+{% block style %}
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 0.25fr 0.5fr 0.25fr;
+        grid-template-rows: 0.25fr 1fr;
+        grid-template-areas:
+        "content-button content-empty-01 content-empty-01"
+        "content-information content-create content-empty-02";
+        grid-gap: 0.5rem;
+        margin: 0.5rem;
+    }
+    .content-button { grid-area: content-button; }
+    .content-information { grid-area: content-information; }
+    .content-create { grid-area: content-create; }
+    .content-empty-01 { grid-area: content-empty-01; }
+    .content-empty-02 { grid-area: content-empty-02; }
+
+    a, a:hover {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    small {
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+{% endblock style %}
+
+{% block content %}
+<div class="grid-container">
+
+    <div class="content-button">
+        <button type="button" class="btn btn-secondary btn-list"><a href="{% url 'SchachtKvz' schacht_kvz_db.id %}">Zurück</a></button>
+    </div>
+
+    <div class="content-information">
+        <div class="card">
+            <div class="card-body">
+                <small>bereits erstellte Rohre:</small>
+                <br><br>
+                {% if rohre_count == 0 %}
+                    <p>noch keine Rohre angelegt</p>
+                {% else %}
+                    {% for item in rohre_db %}
+                        <p>{{ item.name }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="content-create">
+        <div class="card">
+            <div class="card-body">
+
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ formset.as_p }}
+                    <input type="submit" value="Erstellen">
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="content-empty"></div>
+
+</div>
+{% endblock content %}
+
+{% block script %}{% endblock script %}

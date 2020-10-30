@@ -1,0 +1,192 @@
+{% extends 'app_fiberline/base.html' %}
+
+{% block title %}Fiberline: {{ tst_db.name }}{% endblock title %}
+
+{% block style %}
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-rows: 0.125fr 0.25fr 0.125fr 1fr;
+        grid-template-areas:
+        "content-information content-buttons content-buttons content-buttons"
+        "content-card-01 content-card-02 content-card-03 content-card-04"
+        "content-title-01 content-title-01 content-title-02 content-title-02"
+        "content-list-cable content-list-cable content-list-schacht-kvz content-list-schacht-kvz";
+        grid-gap: 1rem;
+        margin: 0.5rem;
+    }
+    .content-information { grid-area: content-information; }
+    .content-buttons {
+        grid-area: content-buttons;
+        display: inline-block;
+    }
+    .content-card-01 { grid-area: content-card-01; }
+    .content-card-02 { grid-area: content-card-02; }
+    .content-card-03 { grid-area: content-card-03; }
+    .content-card-04 { grid-area: content-card-04; }
+    .content-title-01 {
+        grid-area: content-title-01;
+        text-align: center;
+        margin: 1rem 0 0 0;
+    }
+    .content-title-02 {
+        grid-area: content-title-02;
+        text-align: center;
+        margin: 1rem 0 0 0;
+    }
+    .content-list-cable { grid-area: content-list-cable; }
+    .content-list-schacht-kvz { grid-area: content-list-schacht-kvz; }
+
+    small {
+        text-decoration: underline;
+    }
+
+    h3 {
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    .btn-list {
+        margin: 1rem 0.5rem;
+    }
+
+    a, a:hover {
+        text-decoration: none;
+        color: #fff;
+    }
+
+    .link-schacht-kvz, .link-schacht-kvz:hover {
+        text-decoration: none;
+        color: #000;
+    }
+
+    .link-schacht-kvz:hover {
+        font-weight: 700;
+    }
+
+{% endblock style %}
+
+{% block content %}
+<div class="grid-container">
+
+    <div class="content-information">
+        <small>Technikstandort:</small>
+        <h4>{{ tst_db.name }}</h4>
+    </div>
+
+    <div class="content-buttons">
+        <button type="button" class="btn btn-secondary btn-list"><a href="{% url 'Main' %}">Zurück</a></button>
+        {% if default_exists == 0 %}
+            <button type="button" class="btn btn-info btn-list"><a href="{% url 'CreateTechnikstandortDefault' tst_db.id %}">Grundeinstellungen</a></button>
+        {% else %}
+            <button type="button" class="btn btn-info btn-list"><a href="{% url 'UpdateTechnikstandortDefault' tst_db.id %}">Grundeinstellungen</a></button>
+        {% endif %}
+        <button type="button" class="btn btn-success btn-list"><a href="{% url 'CreateSchachtKvz' tst_db.id %}">Schacht / Kvz erstellen</a></button>
+        <button type="button" class="btn btn-primary btn-list"><a href="{% url 'CreateKabel' tst_db.id %}">Kabel erstellen</a></button>
+    </div>
+
+    <div class="content-card-01">
+        <div class="card">
+            <div class="card-body">
+                <small>Anzahl Schächte/Kvz:</small>
+                <h4>- Platzhalter -</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-card-02">
+        <div class="card">
+            <div class="card-body">
+                <small>Anzahl Kabel:</small>
+                <h4>- Platzhalter -</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-card-03">
+        <div class="card">
+            <div class="card-body">
+                <small>Anzahl ...:</small>
+                <h4>- Platzhalter -</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-card-04">
+        <div class="card">
+            <div class="card-body">
+                <small>Anzahl ...:</small>
+                <h4>- Platzhalter -</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-title-01">
+        <h3>Kabel</h3>
+    </div>
+
+    <div class="content-title-02">
+        <h3>Schächte</h3>
+    </div>
+
+    <div class="content-list-cable">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Typ</th>
+                            <th scope="col">Größe</th>
+                            <th scope="col">Aktualisierung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in kabel_db %}
+                            <tr>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.type }}</td>
+                                <td>{{ item.faser_anzahl }}"</td>
+                                <td><button type="button" class="btn btn-warning btn-sm"><a href="{% url 'UpdateKabel' item.id %}">Aktualisierung</a></button></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-list-schacht-kvz">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Typ</th>
+                            <th scope="col">versorgt</th>
+                            <th scope="col">Koordinaten</th>
+                            <th scope="col">Aktualisierung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in schacht_kvz_db %}
+                            <tr>
+                                <td><a class="link-schacht-kvz" href="{% url 'SchachtKvz' item.id %}">{{ item.name }}</a></td>
+                                <td>{{ item.type }}</td>
+                                <td>{{ item.getTrueFalse }}</td>
+                                <td>{{ item.status_geo }}</td>
+                                <td><button type="button" class="btn btn-warning btn-sm"><a href="{% url 'UpdateSchachtKvz' item.id %}">Aktualisierung</a></button></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}
+
+{% block script %}{% endblock script %}

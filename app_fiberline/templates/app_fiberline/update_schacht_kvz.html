@@ -1,0 +1,67 @@
+{% extends 'app_fiberline/base.html' %}
+
+{% block title %}Fiberline: {{ schacht_kvz_db.name }}{% endblock title %}
+
+{% block style %}
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 0.25fr 1fr 0.25fr;
+        grid-template-rows: 0.125fr 1fr;
+        grid-template-areas:
+        "content-buttons content-information content-information"
+        "content-empty-1 content-update content-empty-2";
+        grid-gap: 0.5rem;
+        margin: 0.5rem;
+    }
+    .content-buttons { grid-area: content-buttons; }
+    .content-information { grid-area: content-information; }
+    .content-update { grid-area: content-update; }
+    .content-empty-1 { grid-area: content-empty-1; }
+    .content-empty-2 { grid-area: content-empty-2; }
+
+    a, a:hover {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    small {
+        text-decoration: underline;
+    }
+
+{% endblock style %}
+
+{% block content %}
+
+<div class="grid-container">
+
+    <div class="content-buttons">
+        <button type="button" class="btn btn-secondary"><a class="button-link" href="{% url 'Technikstandort' schacht_kvz_db.technikstandort_id %}">Zurück</a></button>
+    </div>
+
+    <div class="content-information">
+        <small>Schacht / Kabelverzweiger:</small>
+        <h3>{{ schacht_kvz_db.name }}</h3>
+    </div>
+
+    <div class="content-update">
+        <div class="card">
+            <div class="card-body">
+
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ formset.as_p }}
+                    <input type="submit" value="Submit">
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="content-empty-1"></div>
+    <div class="content-empty-2"></div>
+</div>
+
+{% endblock content %}
+
+{% block script %}{% endblock script %}

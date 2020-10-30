@@ -1,0 +1,207 @@
+{% extends 'app_fiberline/base.html' %}
+
+{% block title %}Fiberline | Main{% endblock title %}
+
+{% block style %}
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 0.75fr 1.25fr;
+        grid-template-rows: 0.125fr 0.25fr 1fr;
+        grid-template-areas:
+        "content-buttons content-empty-top"
+        "content-cards content-filter"
+        "content-statistics content-list";
+        grid-gap: 0.5rem;
+        margin: 0.5rem;
+    }
+    .content-buttons { grid-area: content-buttons; }
+    .content-cards { grid-area: content-cards };
+    .content-statistics { grid-area: content-statistics; }
+    .content-list { grid-area: content-list; }
+    .content-filter { grid-area: content-filter; }
+    .content-empty-top { grid-area: content-empty-top; }
+
+    .grid-card-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-rows: 1fr;
+        grid-template-areas:
+        "content-stat-customer content-stat-project content-stat-cluster content-empty";
+        grid-gap: 0.5rem;
+        margin: 0.5rem;
+    }
+    .content-stat-customer { grid-area: content-stat-customer; }
+    .content-stat-project { grid-area: content-stat-project; }
+    .content-stat-cluster { grid-area: content-stat-cluster; }
+    .content-empty { grid-area: content-empty; }
+
+    button {
+        display: inline-block;
+        margin: 1rem 0.25rem;
+        box-shadow: 5px 5px 2.5px #d9d9d9;
+    }
+
+    small {
+        margin: 0.25em;
+        text-decoration: underline;
+        font-weight: 700;
+        text-align: left;
+    }
+
+    h4 {
+        margin: 0.25em;
+        font-weight: 700;
+        text-align: left;
+    }
+
+    .tst-link, .tst-link:hover {
+        text-decoration: none;
+        color: #000;
+    }
+
+    .tst-link:hover {
+        font-size: 1em;
+        font-weight: 700;
+    }
+
+{% endblock style %}
+
+{% block content %}
+<div class="grid-container">
+    <div class="content-buttons">
+        <button type="button" class="btn btn-info">Statistiken</button>
+        <button type="button" class="btn btn-primary">Globale Suche</button>
+        <button type="button" class="btn btn-success">Technikstandort erweitern</button>
+    </div>
+
+    <div class="content-empty-top"></div>
+
+    <div class="content-cards">
+        <div class="grid-card-stats">
+
+            <div class="content-stat-customer">
+                <div class="card">
+                    <div class="card-body">
+                        <small>Anzahl Kunden:</small>
+                        <h4>{{ customer_amount }}</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-stat-project">
+                <div class="card">
+                    <div class="card-body">
+                        <small>Anzahl Projekte:</small>
+                        <h4>{{ project_amount }}</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-stat-cluster">
+                <div class="card">
+                    <div class="card-body">
+                        <small>Anzahl Cluster:</small>
+                        <h4>{{ cluster_amount }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-statistics">
+        <div class="card">
+            <div class="card-body">
+                <div id="chart1"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-filter">
+        <div class="card">
+            <div class="card-body">
+                <form method="get">
+                    {{ filter.form }}
+                    <button type="submit" class="btn btn-info">Filter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-list">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Technikstandort</th>
+                            <th scope="col">Kunde</th>
+                            <th scope="col">Projekt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in technikstandorte_db %}
+                            <tr>
+                                <td><a class="tst-link" href="{% url 'Technikstandort' item.id %}">{{ item.name }}</a></td>
+                                <td>{{ item.cluster.customer }}</td>
+                                <td>{{ item.cluster.project }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    var options = {
+          series: [{
+          name: 'Anzahl:',
+          data: {{ chart_1_data|safe }}
+        }],
+          chart: {
+          type: 'bar',
+          height: 350
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '25%',
+            endingShape: 'rounded'
+          },
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent']
+        },
+        xaxis: {
+          categories: {{ chart_1_label|safe }},
+        },
+        yaxis: {
+          title: {
+            text: 'Anzahl'
+          }
+        },
+        fill: {
+          opacity: 1
+        },
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              return val
+            }
+          }
+        }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart1"), options);
+        chart.render();
+</script>
+{% endblock script %}
